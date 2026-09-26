@@ -700,14 +700,14 @@ if (@available(iOS 13.4, *)) {
     // key-up events properly.
     [super pressesEnded:presses withEvent:event];
 }
-- - (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction
+- -  (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction
                      styleForRegion:(UIPointerRegion *)region
 {
     if (isGrabbing) {
         return [UIPointerStyle hiddenPointerStyle];
     }
-
-    return [UIPointerStyle defaultPointerStyle];
+    return nil;
+}
 }
 }
 - (BOOL)prefersPointerLocked {
