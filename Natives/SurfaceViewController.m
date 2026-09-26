@@ -32,7 +32,7 @@ int memorystatus_control(uint32_t command, int32_t pid, uint32_t flags, void *bu
 static int currentHotbarSlot = -1;
 static GameSurfaceView* pojavWindow;
 
-@interface SurfaceViewController ()<UITextFieldDelegate, UIGestureRecognizerDelegate> {
+@interface SurfaceViewController ()<UITextFieldDelegate, UIGestureRecognizerDelegate, UIPointerInteractionDelegate> {
 }
 
 @property(nonatomic) NSDictionary* metadata;
@@ -126,8 +126,15 @@ static GameSurfaceView* pojavWindow;
     self.touchView.multipleTouchEnabled = YES;
     [self.touchView addSubview:self.surfaceView];
 
-    [self.rootView addSubview:self.touchView];
-    [self.rootView addSubview:self.ctrlView];
+[self.rootView addSubview:self.touchView];
+
+if (@available(iOS 13.4, *)) {
+    UIPointerInteraction *pointerInteraction =
+        [[UIPointerInteraction alloc] initWithDelegate:self];
+    [self.touchView addInteraction:pointerInteraction];
+}
+
+[self.rootView addSubview:self.ctrlView];
 
     [self performSelector:@selector(setupCategory_Navigation)];
 
@@ -693,7 +700,14 @@ static GameSurfaceView* pojavWindow;
     // key-up events properly.
     [super pressesEnded:presses withEvent:event];
 }
-
+- (UIPointerStyle *)pointerInteraction:(UIPointerInteraction *)interaction
+                     styleForRegion:(UIPointerRegion *)region
+{
+    if (isGrabbing) {
+        return [UIPointerStyle hiddenPointerStyle];
+    }
+    return nil;
+}
 - (BOOL)prefersPointerLocked {
     return GCMouse.mice.count > 0 && (isGrabbing || virtualMouseEnabled);
 }
